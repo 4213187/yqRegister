@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yqregister.mapper.RecordMapper" >
+  <resultMap id="BaseResultMap" type="com.yqregister.entity.Record" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="action" property="action" jdbcType="INTEGER" />
+    <result column="site_id" property="siteId" jdbcType="INTEGER" />
+    <result column="date" property="date" jdbcType="TIMESTAMP" />
+    <result column="temperature" property="temperature" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, username, phone, action, site_id, date, temperature
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from record
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <resultMap id="GroupRecordMap" type="com.yqregister.entity.GroupRecord" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="action" property="action" jdbcType="INTEGER" />
+    <result column="site_id" property="siteId" jdbcType="INTEGER" />
+    <result column="date" property="date" jdbcType="TIMESTAMP" />
+    <result column="temperature" property="temperature" jdbcType="VARCHAR" />
+    <result column="name" property="name"  />
+  </resultMap>
+
+  <select id="find" resultMap="GroupRecordMap" parameterType="GroupRecord" >
+    select
+    r.id, r.username, r.phone, r.action, r.site_id, r.date, r.temperature,s.name
+    from record r,site s
+    where r.site_id =s.id
+    <if test="username !=null and username !=''">
+     and r.username like '%${username}%'
+    </if>
+    <if test="siteId != 0 and siteId != null">
+     and  r.site_id =#{siteId}
+    </if>
+    <if test="name !=null and name !=''">
+      and s.name like '%${name}%'
+    </if>
+    <if test="beginDate !=null ">
+    and  r.date >= #{beginDate}
+    </if>
+    <if test="endDate !=null ">
+     and r.date <![CDATA[ <= ]]> #{endDate}
+    </if>
+  </select>
+
+
+  <select id="countBySiteId" resultType="int"  >
+    select
+    count(*) as count
+    from record
+    where 1=1
+    <if test="siteId != 0 and siteId != null">
+     and site_id = #{siteId}
+    </if>
+  </select>
+
+
+
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yqregister.entity.Record" >
+    insert into record (id, username, phone, 
+      action, site_id, date, 
+      temperature)
+    values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+      #{action,jdbcType=INTEGER}, #{siteId,jdbcType=VARCHAR}, #{date,jdbcType=TIMESTAMP}, 
+      #{temperature,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yqregister.entity.Record" >
+    insert into record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="username != null" >
+        username,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="action != null" >
+        action,
+      </if>
+      <if test="siteId != null" >
+        site_id,
+      </if>
+      <if test="date != null" >
+        date,
+      </if>
+      <if test="temperature != null" >
+        temperature,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="action != null" >
+        #{action,jdbcType=INTEGER},
+      </if>
+      <if test="siteId != null" >
+        #{siteId,jdbcType=INTEGER},
+      </if>
+      <if test="date != null" >
+        #{date,jdbcType=TIMESTAMP},
+      </if>
+      <if test="temperature != null" >
+        #{temperature,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yqregister.entity.Record" >
+    update record
+    <set >
+      <if test="username != null" >
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="action != null" >
+        action = #{action,jdbcType=INTEGER},
+      </if>
+      <if test="siteId != null" >
+        site_id = #{siteId,jdbcType=VARCHAR},
+      </if>
+      <if test="date != null" >
+        date = #{date,jdbcType=TIMESTAMP},
+      </if>
+      <if test="temperature != null" >
+        temperature = #{temperature,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yqregister.entity.Record" >
+    update record
+    set username = #{username,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      action = #{action,jdbcType=INTEGER},
+      site_id = #{siteId,jdbcType=INTEGER},
+      date = #{date,jdbcType=TIMESTAMP},
+      temperature = #{temperature,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
